@@ -1,0 +1,67 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    ==================================================================
+    Orleans.Silo.csproj - SILO HOST (Server)
+    ==================================================================
+    This is a Console Application (OutputType = Exe) that:
+    - Starts an Orleans Silo (server node)
+    - Registers itself in the cluster
+    - Hosts and executes grain instances
+    - Persists grain state to Azure Storage
+    - Runs until the user stops it
+
+    THE SILO IS THE "WORKER" - it does the actual grain execution.
+    Without a running Silo, the Client cannot do anything!
+
+    SDK: Microsoft.NET.Sdk (NOT Web) because it's a console app.
+  -->
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net9.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- Clustering: Silos use Azure Table Storage to discover each other -->
+    <PackageReference Include="Microsoft.Orleans.Clustering.AzureStorage" Version="10.1.0" />
+
+    <!--
+      Persistence: Provides AddAzureTableGrainStorage and AddAzureBlobGrainStorage.
+      These are the storage providers for grain state persistence.
+    -->
+    <PackageReference Include="Microsoft.Orleans.Persistence.AzureStorage" Version="10.1.0" />
+
+    <!-- Reminders: Persistent timer service backed by Azure Table Storage -->
+    <PackageReference Include="Microsoft.Orleans.Reminders.AzureStorage" Version="10.1.0" />
+
+    <!-- Core Orleans Runtime -->
+    <PackageReference Include="Microsoft.Orleans.Runtime" Version="10.1.0" />
+
+    <!--
+      Orleans Server: The full server package. Includes everything needed
+      to run a Silo - the runtime, hosting, configuration, etc.
+    -->
+    <PackageReference Include="Microsoft.Orleans.Server" Version="10.1.0" />
+
+    <!--
+      Streaming (Azure Queue): Provides AddAzureQueueStreams for
+      Orleans Streams backed by Azure Storage Queues.
+    -->
+    <PackageReference Include="Microsoft.Orleans.Streaming.AzureStorage" Version="10.1.0" />
+
+    <!--
+      Transactions (Azure Storage): Provides transactional state storage
+      backed by Azure Table Storage (AddAzureTableTransactionalStateStorage).
+    -->
+    <PackageReference Include="Microsoft.Orleans.Transactions.AzureStorage" Version="10.1.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- Reference the Grains project to host its grains -->
+    <ProjectReference Include="..\Orleans.Grains\Orleans.Grains.csproj" />
+  </ItemGroup>
+
+</Project>

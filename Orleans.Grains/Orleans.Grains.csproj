@@ -1,0 +1,81 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    ==================================================================
+    Orleans.Grains.csproj - GRAIN CLASS LIBRARY
+    ==================================================================
+    This is a Class Library project that contains:
+
+    1. Grain INTERFACES (Abstractions/) - The public contracts
+       - These define WHAT operations a grain supports
+       - Separated so the Client project can reference them
+       - The client needs the INTERFACES, not the IMPLEMENTATIONS
+
+    2. Grain IMPLEMENTATIONS (Grains/) - The actual logic
+       - These implement the interfaces defined in Abstractions/
+       - Only the Silo needs these (it hosts the grains)
+
+    3. State classes (State/) - Data models for grain persistence
+    4. Event classes (Events/) - Stream event data models
+    5. Filter classes (Filters/) - Grain call interceptors
+
+    ARCHITECTURE NOTE:
+    Both Orleans.Client and Orleans.Silo reference this project:
+    - Client needs: Interfaces (Abstractions/) and Filters
+    - Silo needs: Everything (interfaces, implementations, state, etc.)
+  -->
+
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!--
+      Core Orleans Abstractions - Provides fundamental types:
+      IGrain, IGrainWithGuidKey, IGrainWithIntegerKey, etc.
+      Required by ALL grain interface definitions.
+    -->
+    <PackageReference Include="Microsoft.Orleans.Core.Abstractions" Version="10.1.0" />
+
+    <!--
+      Reminders support - Provides IRemindable interface and
+      reminder registration APIs. Used by CheckingAccountGrain
+      for recurring payments.
+    -->
+    <PackageReference Include="Microsoft.Orleans.Reminders" Version="10.1.0" />
+
+    <!--
+      Orleans Runtime - Core runtime services including:
+      Grain base class, GrainFactory, GetStreamProvider, etc.
+      Required by grain implementations.
+    -->
+    <PackageReference Include="Microsoft.Orleans.Runtime" Version="10.1.0" />
+
+    <!--
+      Orleans SDK - Includes code generation for serialization.
+      The [GenerateSerializer] and [Id(n)] attributes from this
+      package enable the Orleans compiler to generate fast
+      serialization code for state/event types.
+    -->
+    <PackageReference Include="Microsoft.Orleans.Sdk" Version="10.1.0" />
+
+    <!--
+      Streaming support - Provides stream types:
+      IAsyncObserver<T>, StreamId, stream extensions on Grain base,
+      and the stream provider abstractions.
+      Used by CheckingAccountGrain and CustomerGrain.
+    -->
+    <PackageReference Include="Microsoft.Orleans.Streaming" Version="10.1.0" />
+
+    <!--
+      Transactions support - Provides:
+      ITransactionalState<T>, [Transaction] attribute,
+      TransactionOption enum, ITransactionClient.
+      Used by CheckingAccountGrain and AtmGrain.
+    -->
+    <PackageReference Include="Microsoft.Orleans.Transactions" Version="10.1.0" />
+  </ItemGroup>
+
+</Project>

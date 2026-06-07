@@ -1,0 +1,59 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <!--
+    ==================================================================
+    Orleans.Client.csproj - CLIENT HOST (Web API)
+    ==================================================================
+    This is an ASP.NET Core Web API project that:
+    - Connects to the Orleans cluster as a client
+    - Exposes REST API endpoints that call grains
+    - Hosts NO grains itself
+
+    SDK: Microsoft.NET.Sdk.Web (NOT plain Sdk) because it's a Web app.
+    This gives us: ASP.NET Core, Minimal APIs, Kestrel web server, etc.
+
+    ARCHITECTURE: Client <-> Silo <-> Grain
+    The Client is SEPARATE from the Silo. They can run on
+    different machines, different processes, or even on the
+    same machine in different console windows.
+  -->
+
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!--
+      Orleans Client: The client-side runtime that connects to the cluster.
+      Provides IClusterClient, ITransactionClient, and client hosting.
+    -->
+    <PackageReference Include="Microsoft.Orleans.Client" Version="10.1.0" />
+
+    <!--
+      Clustering: Needed for the client to find silos in the cluster.
+      The client reads the Azure Table to discover available silos.
+    -->
+    <PackageReference Include="Microsoft.Orleans.Clustering.AzureStorage" Version="10.1.0" />
+
+    <!--
+      Transactions: Needed for ITransactionClient on the client side.
+      The client creates transactions that span grain calls.
+    -->
+    <PackageReference Include="Microsoft.Orleans.Transactions" Version="10.1.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!--
+      Reference the Grains project to access grain INTERFACES.
+      The client only needs interfaces (Abstractions/) and filters.
+      It does NOT need the grain implementations.
+      
+      IMPORTANT: The Grains project must be built first so the
+      client can reference its types.
+    -->
+    <ProjectReference Include="..\Orleans.Grains\Orleans.Grains.csproj" />
+  </ItemGroup>
+
+</Project>
